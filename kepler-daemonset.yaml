@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kepler
+  namespace: kube-system
+  labels:
+    app: kepler
+spec:
+  selector:
+    matchLabels:
+      app: kepler
+  template:
+    metadata:
+      labels:
+        app: kepler
+    spec:
+      containers:
+      - name: kepler
+        image: quay.io/sustainable_computing_io/kepler:latest
+        imagePullPolicy: Always
+        securityContext:
+        privileged: true
+        runAsUser: 0
+        ports:
+        - containerPort: 9103
+          name: metrics
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        env:
+        - name: KEPLER_NAMESPACE
+          value: "kube-system"
+        - name: KEPLER_ENABLE_GPU
+          value: "false"
+        - name: KEPLER_ENABLE_PROCESS_METRICS
+          value: "false"
+        - name: KEPLER_ENABLE_CONTAINER_METRICS
+          value: "true"
+        - name: KEPLER_ENABLE_NODE_METRICS
+          value: "true"
+        - name: KEPLER_ENABLE_PROMETHEUS
+          value: "true"
+        - name: KEPLER_PROMETHEUS_PORT
+          value: "9103"
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+          volumes:
+            - name: proc
+              hostPath:
+                path: /proc
+            - name: sys
+              hostPath:
+                path: /sys
+      hostNetwork: true
+      tolerations:
+      - operator: "Exists"
+      nodeSelector:
+        kubernetes.io/os: linux

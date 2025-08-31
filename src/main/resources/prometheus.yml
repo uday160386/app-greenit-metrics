@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'springboot'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['k8s-default-metricsa-e2183f115d-c4e1bff5280980b6.elb.ap-southeast-1.amazonaws.com:80']
+  # Kepler on each node (K8s); replace with your service if needed
+  - job_name: 'kepler'
+    static_configs:
+      - targets: ['k8s-kepler-kepler-a84583afa3-f8337490136df714.elb.ap-southeast-1.amazonaws.com:9102']
+
+  # OR Scaphandre (VM)
+  - job_name: 'scaphandre'
+    static_configs:
+      - targets: ['host:8082'] # whatever port scaphandre exporter serves

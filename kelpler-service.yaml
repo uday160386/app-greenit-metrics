@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kepler-public
+  namespace: kepler
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: kepler
+  ports:
+    - protocol: TCP
+      port: 9100
+      targetPort: 9100

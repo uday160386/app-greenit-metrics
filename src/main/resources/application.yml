@@ -1,0 +1,13 @@
+# application.yml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    tags:
+      application: springboot-green # use your app name
+
+# (Optional) serve actuator on a separate port
+server:
+  port: 8080
